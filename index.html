@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תיק עבודות - מודעות סטטיות</title>
+    <title>חנן גרפיקס - תיק עבודות</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
+            background-color: #ffffff; /* רקע לבן נקי לחלוטין */
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -34,7 +34,7 @@
             object-fit: contain;
         }
 
-        /* אזורי הלחיצה הבלתי נראים - חצי ימין חצי שמאל */
+        /* אזורי הלחיצה הבלתי נראים */
         .click-zone {
             position: absolute;
             top: 0;
@@ -55,7 +55,7 @@
         <div class="click-zone zone-left" id="btn-prev"></div>
         <div class="click-zone zone-right" id="btn-next"></div>
         
-        <img id="gallery-img" src="" alt="Presentation Slide">
+        <img id="gallery-img" src="" alt="מודעה - חנן גרפיקס">
     </div>
 
 <script>
@@ -63,48 +63,33 @@
     const totalImages = 7;
     const imgElement = document.getElementById('gallery-img');
 
-    // לוגיקה חכמה לחישוב הכתובת הבלעדית המלאה
     function getAbsoluteImageUrl() {
-        // 1. קורא את כתובת ה-URL הנוכחית של הדף
         const currentUrl = window.location.href;
-        
-        // 2. מסיר את index.html אם הוא מופיע בכתובת, כדי לקבל את כתובת התיקייה הראשית
         let baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-        
-        // 3. בונה את הכתובת המלאה: baseUrl + תיקיית slides + מספר תמונה + .jpg
-        const fullImagePath = baseUrl + 'slides/' + currentImage + '.jpg';
-        
-        console.log("מנסה לטעון תמונה מכתובת מלאה: " + fullImagePath); // תוכל לראות את הכתובת הזו אם תפתח Console
-        return fullImagePath;
+        return baseUrl + 'slides/' + currentImage + '.jpg';
     }
 
-    // פונקציה להחלפת התמונה
     function updateImage() {
-        // טוען את התמונה מהכתובת המלאה שחושבה
         imgElement.src = getAbsoluteImageUrl();
     }
 
     function changeImage(step) {
         currentImage += step;
         
-        // מעגל אינסופי
         if (currentImage > totalImages) currentImage = 1;
         if (currentImage < 1) currentImage = totalImages;
         
         updateImage();
     }
 
-    // חיבור לחיצות עכבר
     document.getElementById('btn-next').addEventListener('click', () => changeImage(1));
     document.getElementById('btn-prev').addEventListener('click', () => changeImage(-1));
 
-    // חיבור חצי מקלדת
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') changeImage(1);
         if (e.key === 'ArrowLeft') changeImage(-1);
     });
 
-    // טעינה ראשונית
     updateImage();
 </script>
 </body>
