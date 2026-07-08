@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Static Ads Presentation</title>
+    <title>תיק עבודות - מודעות סטטיות</title>
     <style>
-        /* איפוס שוליים ומסך מלא נקי */
+        /* איפוס מסך מלא */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000; /* רקע שחור למראה מקצועי */
+            background-color: #000; /* רקע שחור נקי */
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: system-ui, sans-serif;
             user-select: none;
+            -webkit-user-select: none;
         }
 
-        /* מכל המצגת - תופס את כל גודל הדפדפן */
-        .presentation-container {
+        .gallery-container {
             position: relative;
             width: 100vw;
             height: 100vh;
@@ -30,97 +29,72 @@
             align-items: center;
         }
 
-        /* הגדרת השקופיות - מותאמות למסך בלי עיוות */
-        .slide-img {
+        /* עיצוב התמונה שתתאים בדיוק למסך בנוטישן */
+        img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain;
-            display: none; /* מוסתר כברירת מחדל */
+            object-fit: contain; /* שומר על פרופורציות המודעה בלי למתוח אותה */
         }
 
-        /* השקופית הפעילה שמוצגת כרגע */
-        .slide-img.active {
-            display: block;
-        }
-
-        /* אזורי הלחיצה הבלתי נראים על המסך */
+        /* אזורי הלחיצה השקופים */
         .click-zone {
             position: absolute;
             top: 0;
             height: 100%;
+            width: 50%;
             z-index: 10;
-            background: rgba(255, 255, 255, 0); /* שקוף לחלוטין */
+            background: rgba(0, 0, 0, 0); /* שקוף לחלוטין */
             cursor: pointer;
         }
 
-        /* חצי מסך שמאלי - מחזיר אחורה */
-        .zone-left {
-            left: 0;
-            width: 50%;
-        }
-
-        /* חצי מסך ימני - מעביר קדימה */
-        .zone-right {
-            right: 0;
-            width: 50%;
-        }
+        .zone-left { left: 0; }   /* חצי מסך שמאלי - אחורה */
+        .zone-right { right: 0; } /* חצי מסך ימני - קדימה */
     </style>
 </head>
 <body>
 
-<div class="presentation-container">
-    <div class="click-zone zone-left" id="prevBtn" title="שקופית קודמת"></div>
-    <div class="click-zone zone-right" id="nextBtn" title="שקופית הבאה"></div>
-
-    <div id="slides-wrapper">
-        <img src="1.jpg" class="slide-img active" alt="Slide 1">
-        <img src="2.jpg" class="slide-img" alt="Slide 2">
-        <img src="3.jpg" class="slide-img" alt="Slide 3">
-        <img src="4.jpg" class="slide-img" alt="Slide 4">
-        <img src="5.jpg" class="slide-img" alt="Slide 5">
-        <img src="6.jpg" class="slide-img" alt="Slide 6">
-        <img src="7.jpg" class="slide-img" alt="Slide 7">
+    <div class="gallery-container">
+        <div class="click-zone zone-left" id="btn-prev"></div>
+        <div class="click-zone zone-right" id="btn-next"></div>
+        
+        <img id="gallery-img" src="slides/1.jpg" alt="Presentation Slide">
     </div>
-</div>
 
 <script>
-    const slides = document.querySelectorAll('.slide-img');
-    let currentIndex = 0; // מתחיל תמיד מהשקופית הראשונה (אינדקס 0)
+    let currentImage = 1;
+    const totalImages = 7;
+    const imgElement = document.getElementById('gallery-img');
 
-    function showSlide(index) {
-        // הסרת השקופית הנוכחית מהמסך
-        slides[currentIndex].classList.remove('active');
+    // פונקציה להחלפת התמונה
+    function changeImage(step) {
+        currentImage += step;
         
-        // עדכון המיקום החדש
-        currentIndex = index;
-        
-        // הצגת השקופית החדשה
-        slides[currentIndex].classList.add('active');
-    }
-
-    // ניווט מעגלי קדימה (בלחיצה על ימין)
-    function nextSlide() {
-        let nextIndex = (currentIndex + 1) % slides.length;
-        showSlide(nextIndex);
-    }
-
-    // ניווט מעגלי אחורה (בלחיצה על שמאל)
-    function prevSlide() {
-        let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
-        showSlide(prevIndex);
-    }
-
-    // חיבור הלחיצות לאזורים השקופים
-    document.getElementById('nextBtn').addEventListener('click', nextSlide);
-    document.getElementById('prevBtn').addEventListener('click', prevSlide);
-
-    // תמיכה במקשי החיצים במקלדת (ימין ושמאל) לשימוש נוח
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight') {
-            nextSlide();
-        } else if (e.key === 'ArrowLeft') {
-            prevSlide();
+        // לוגיקה מעגלית
+        if (currentImage > totalImages) {
+            currentImage = 1; // חוזר להתחלה
+        } else if (currentImage < 1) {
+            currentImage = totalImages; // קופץ לסוף
         }
+        
+        // עדכון מקור התמונה מתוך תיקיית slides
+        imgElement.src = `slides/${currentImage}.jpg`;
+    }
+
+    // חיבור אירועי לחיצה לאזורים השקופים
+    document.getElementById('btn-next').addEventListener('click', () => changeImage(1));
+    document.getElementById('btn-prev').addEventListener('click', () => changeImage(-1));
+
+    // גיבוי למקרה שהתמונות בגיטהאב נשמרו עם סיומת JPG גדולה בתוך התיקייה
+    imgElement.onerror = function() {
+        if (this.src.endsWith('.jpg')) {
+            this.src = `slides/${currentImage}.JPG`;
+        }
+    };
+
+    // תמיכה בחיצי המקלדת
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') changeImage(1);
+        if (e.key === 'ArrowLeft') changeImage(-1);
     });
 </script>
 </body>
