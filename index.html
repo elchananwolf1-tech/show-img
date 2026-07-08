@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Ads Presentation</title>
+    <style>
+        /* איפוס מלא למסך נקי לחלוטין */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000; /* רקע שחור למראה מצגת מקצועי */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, sans-serif;
+            user-select: none;
+        }
+
+        /* מכל התמונה - תופס את כל המסך */
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* השקופית עצמה - שומרת על פרופורציה המקורית בלי להתעוות */
+        .slide-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none; /* מוסתר כברירת מחדל, מוצג דרך ה-JS */
+        }
+
+        .slide-img.active {
+            display: block;
+        }
+
+        /* אזורי הלחיצה הבלתי נראים */
+        .click-zone {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0); /* שקוף לחלוטין */
+            cursor: pointer;
+        }
+
+        /* חצי מסך שמאלי - הולך אחורה */
+        .zone-left {
+            left: 0;
+            width: 50%;
+        }
+
+        /* חצי מסך ימני - הולך קדימה */
+        .zone-right {
+            right: 0;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-container">
+    <div class="click-zone zone-left" id="prevBtn" title="שקופית קודמת"></div>
+    <div class="click-zone zone-right" id="nextBtn" title="שקופית הבאה"></div>
+
+    <div id="slides-wrapper">
+        <img src="slides/1.png" class="slide-img active" alt="Slide 1">
+        <img src="slides/2.png" class="slide-img" alt="Slide 2">
+        <img src="slides/3.png" class="slide-img" alt="Slide 3">
+        </div>
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide-img');
+    let currentIndex = 0; // תמיד מתחיל מהדף הראשון (אינדקס 0)
+
+    function showSlide(index) {
+        // הסרת קלאס אקטיבי מהשקופית הנוכחית
+        slides[currentIndex].classList.remove('active');
+        
+        // עדכון האינדקס הנוכחי
+        currentIndex = index;
+        
+        // הוספת קלאס אקטיבי לשקופית החדשה
+        slides[currentIndex].classList.add('active');
+    }
+
+    // לוגיקה מעגלית קדימה (לחיצה על ימין)
+    function nextSlide() {
+        let nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
+    }
+
+    // לוגיקה מעגלית אחורה (לחיצה על שמאל)
+    function prevSlide() {
+        let prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(prevIndex);
+    }
+
+    // חיבור האירועים לאזורי הלחיצה
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+    // בונוס: תמיכה במקשי חיצים במקלדת למי שיצפה ישירות מהאתר
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+            nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+            prevSlide();
+        }
+    });
+</script>
+</body>
+</html>
